@@ -1,0 +1,80 @@
+# (c) Copyright 2016 Hewlett Packard Enterprise Development LP
+# (c) Copyright 2017 SUSE LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+---
+
+- name: ARD-SVC | install | Update installed packager cache
+  become: yes
+  install_package:
+    cache: update
+
+- name: ARD-SVC | install | install ardana-service
+  become: yes
+  install_package:
+    name: "{{ ardana_svc_service_venv_name }}"
+    service: "{{ ardana_svc_service }}"
+    state: present
+  register: ardana_notify_ardana_service_restart_required
+
+# NOTE: This is currently broken in 1.9.4 due to overlapping "lib" folder
+#
+#- name: ARD-SVC | install | Extract ardana-service files
+#  become: yes
+#  unarchive:
+#    dest: "{{ ardana_svc_component | venv_dir }}"
+#    src: "{{ item }}"
+#    copy: no
+#    owner: "{{ ardana_svc_os_user }}"
+#    group: "{{ ardana_svc_os_group }}"
+#    mode: 0775
+#  with_fileglob:
+#    - "{{ ardana_svc_component | jar_dir }}/{{ ardana_svc_component }}-*.tar.gz"
+
+# Work around 1.9.4 unarchive issue: Currently we need to untar manually
+# TODO: once we move to 2.0 remove this in favour of unarchive
+- name: ARD-SVC | install | Extract ardana-service files
+  tags:
+  - skip_ansible_lint
+  become: yes
+  shell: >
+    tar -xzf {{ ardana_svc_component | jar_dir }}/{{ ardana_svc_component }}-*.tar.gz
+    && chown -R {{ ardana_svc_os_user }}:{{ ardana_svc_os_group }} *
+  args:
+    chdir: "{{ ardana_svc_component | venv_dir }}"
+
+- name: ARD-SVC | install | Create required directories
+  become: yes
+  file:
+    path: "{{ item }}"
+    owner: "{{ ardana_svc_os_user }}"
+    group: "{{ ardana_svc_os_group }}"
+    mode: 0775
+    state: directory
+  with_items:
+    -  "{{ ardana_svc_log_dir }}"
+    -  "{{ ardana_svc_process_logs_dir }}"
+    -  "{{ ardana_svc_process_archive_dir }}"
+
+- name: ARD-SVC | install | Setup ardana-service
+  become: yes
+  setup_systemd:
+    name: "{{ ardana_svc_service }}"
+    service: "{{ ardana_svc_service }}"
+    user: "{{ ardana_svc_os_user }}"
+    group: "{{ ardana_svc_os_group }}"
+    cmd: node
+    args: >
+      {{ ardana_svc_component | venv_dir }}/index.js
+      --config {{ ardana_svc_component | config_dir }}/config.yml
