@@ -28,32 +28,6 @@
     state: present
   register: ardana_notify_ardana_service_restart_required
 
-# NOTE: This is currently broken in 1.9.4 due to overlapping "lib" folder
-#
-#- name: ARD-SVC | install | Extract ardana-service files
-#  become: yes
-#  unarchive:
-#    dest: "{{ ardana_svc_component | venv_dir }}"
-#    src: "{{ item }}"
-#    copy: no
-#    owner: "{{ ardana_svc_os_user }}"
-#    group: "{{ ardana_svc_os_group }}"
-#    mode: 0775
-#  with_fileglob:
-#    - "{{ ardana_svc_component | jar_dir }}/{{ ardana_svc_component }}-*.tar.gz"
-
-# Work around 1.9.4 unarchive issue: Currently we need to untar manually
-# TODO: once we move to 2.0 remove this in favour of unarchive
-- name: ARD-SVC | install | Extract ardana-service files
-  tags:
-  - skip_ansible_lint
-  become: yes
-  shell: >
-    tar -xzf {{ ardana_svc_component | jar_dir }}/{{ ardana_svc_component }}-*.tar.gz
-    && chown -R {{ ardana_svc_os_user }}:{{ ardana_svc_os_group }} *
-  args:
-    chdir: "{{ ardana_svc_component | venv_dir }}"
-
 - name: ARD-SVC | install | Create required directories
   become: yes
   file:
@@ -74,7 +48,7 @@
     service: "{{ ardana_svc_service }}"
     user: "{{ ardana_svc_os_user }}"
     group: "{{ ardana_svc_os_group }}"
-    cmd: node
+    cmd: python
     args: >
-      {{ ardana_svc_component | venv_dir }}/index.js
-      --config {{ ardana_svc_component | config_dir }}/config.yml
+      {{ ardana_svc_component | venv_dir }}/lib/python2.7/site-packages/ardana_service/main.py
+      --config-file {{ ardana_svc_component | config_dir }}/ardana-service.conf

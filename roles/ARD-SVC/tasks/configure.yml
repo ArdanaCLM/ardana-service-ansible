@@ -17,8 +17,8 @@
 - name: ARD-SVC | configure | configure ardana-service
   become: yes
   template:
-    dest: "{{ ardana_svc_component | config_dir }}/config.yml"
-    src: "config.yml.j2"
+    dest: "{{ ardana_svc_component | config_dir }}/ardana-service.conf"
+    src: "ardana-service.conf.j2"
     owner: "{{ ardana_svc_os_user }}"
     group: "{{ ardana_svc_os_user }}"
     mode: 0600

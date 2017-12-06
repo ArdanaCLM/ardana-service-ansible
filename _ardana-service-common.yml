@@ -15,7 +15,7 @@
 #
 ---
 
-- hosts: ARD-SVC
+- hosts: localhost
   roles:
     - ARD-SVC
   tasks:

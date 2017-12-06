@@ -15,9 +15,9 @@
 #
 ---
 
-- hosts: ARD-SVC
+- hosts: localhost
   roles:
     - ARD-SVC
   tasks:
     - include: roles/ARD-SVC/tasks/configure.yml
-      when: ardana_svc_host_is_deployer
+#      when: ardana_svc_host_is_deployer

@@ -17,20 +17,20 @@
 
 #- include: _ardana-service-common.yml
 
-#- hosts: ARD-SVC
-#  roles:
-#    - ARD-SVC
-#  tasks:
-#    - include: roles/ARD-SVC/tasks/install.yml
+- hosts: localhost
+  roles:
+    - ARD-SVC
+  tasks:
+    - include: roles/ARD-SVC/tasks/install.yml
 #      when: ardana_svc_host_is_deployer
 
-#- include: _ardana-service-configure.yml
+- include: _ardana-service-configure.yml
 
-#- hosts: ARD-SVC
-#  roles:
-#    - ARD-SVC
-#  tasks:
-#    - include: roles/ARD-SVC/tasks/start.yml
+- hosts: localhost
+  roles:
+    - ARD-SVC
+  tasks:
+    - include: roles/ARD-SVC/tasks/start.yml
 #      when: ardana_svc_host_is_deployer
 
-- include: ardana-service-deploy-monasca.yml
+#- include: ardana-service-deploy-monasca.yml

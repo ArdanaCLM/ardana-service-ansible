@@ -18,15 +18,20 @@
 
 ardana_svc_os_group: "{{ ansible_env['USER'] }}"
 ardana_svc_os_user: "{{ ansible_env['USER'] }}"
-ardana_svc_deployment_path: "/home/{{ ansible_env['USER'] }}/scratch/ansible/next/"
+ardana_user_home: "{{ ansible_env['HOME'] }}"
+ardana_svc_deployment_path: "{{ ardana_user_home }}/scratch/ansible/next/"
 
 ardana_svc_component: ardana-service
 ardana_svc_service: "{{ ardana_svc_component }}"
-ardana_svc_service_venv_name: ardana_service
+ardana_svc_service_venv_name: ardana-service
 ardana_svc_log_dir: "/var/log/{{ ardana_svc_component }}"
-ardana_svc_process_logs_dir: "{{ ardana_svc_component | venv_dir }}/logs"
+ardana_svc_process_logs_dir: "{{ ardana_svc_log_dir }}/logs"
 ardana_svc_process_archive_dir: "{{ ardana_svc_component | venv_dir }}/archive"
-ardana_svc_port: "{{ ARD_SVC.advertises.vips.private[0].port }}"
+ardana_svc_port: "{% if ARD_SVC is defined -%}
+                      {{ ARD_SVC.advertises.vips.private[0].port }}
+                  {%- else -%}
+                      9085
+                  {%- endif %}"
 ardana_svc_internal_service_url:  "{{ ARD_SVC.advertises.vips.private[0].url }}"
 ardana_svc_bind_address: "{{ host.bind.ARD_SVC.internal.ip_address }}"
 ardana_svc_systemd_path: "/usr/lib/systemd/system/{{ ardana_svc_component }}.service"
