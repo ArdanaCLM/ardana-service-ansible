@@ -20,13 +20,14 @@
   install_package:
     cache: update
 
-- name: ARD-SVC | install | install ardana-service
+- name: ARD-SVC | install | install ardana-service (venv legacy)
   become: yes
   install_package:
     name: "{{ ardana_svc_service_venv_name }}"
     service: "{{ ardana_svc_service }}"
     state: present
   register: ardana_notify_ardana_service_restart_required
+  when: deployer_media_legacy_layout|bool == true
 
 - name: ARD-SVC | install | Create required directories
   become: yes
