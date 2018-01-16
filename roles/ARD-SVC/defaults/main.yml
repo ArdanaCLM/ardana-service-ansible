@@ -19,7 +19,7 @@
 ardana_svc_os_group: "{{ ansible_env['USER'] }}"
 ardana_svc_os_user: "{{ ansible_env['USER'] }}"
 ardana_user_home: "{{ ansible_env['HOME'] }}"
-ardana_svc_deployment_path: "{{ ardana_user_home }}/scratch/ansible/next/"
+ardana_openstack_path: "{{ ardana_user_home }}/openstack/"
 
 ardana_svc_component: ardana-service
 ardana_svc_service: "{{ ardana_svc_component }}"

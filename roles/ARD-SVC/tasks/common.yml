@@ -16,8 +16,8 @@
 #
 ---
 
-- name: ARD-SVC | common | Stat deployment path
-  stat: path={{ardana_svc_deployment_path}}
+- name: ARD-SVC | common | Stat openstack path
+  stat: path={{ardana_openstack_path}}
   register: stat_data
 
 - name: ARD-SVC | common | Set fact
