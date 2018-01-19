@@ -34,7 +34,11 @@ ardana_svc_port: "{% if ARD_SVC is defined -%}
                       9085
                   {%- endif %}"
 ardana_svc_internal_service_url:  "{{ ARD_SVC.advertises.vips.private[0].url }}"
-ardana_svc_bind_address: "{{ host.bind.ARD_SVC.internal.ip_address }}"
+ardana_svc_bind_address: "{% if host is defined -%}
+                              {{ host.bind.ARD_SVC.internal.ip_address }}
+                          {%- else -%}
+                              127.0.0.1
+                          {%- endif %}"
 ardana_svc_systemd_path: "/usr/lib/systemd/system/{{ ardana_svc_component }}.service"
 ardana_svc_perform_upgrade_check: false
 ardana_svc_default_log_level: info

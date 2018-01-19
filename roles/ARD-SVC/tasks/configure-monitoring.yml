@@ -22,5 +22,5 @@
   monasca_agent_plugin:
     name: httpcheck
     args: >
-      url={{ ardana_svc_internal_service_url }}/api/v1/heartbeat
+      url={{ ardana_svc_internal_service_url }}/api/v2/heartbeat
       dimensions=service:ardana,component:lifecycle-service
