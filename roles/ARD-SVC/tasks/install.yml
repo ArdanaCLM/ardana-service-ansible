@@ -41,8 +41,9 @@
     -  "{{ ardana_svc_log_dir }}"
     -  "{{ ardana_svc_process_logs_dir }}"
     -  "{{ ardana_svc_process_archive_dir }}"
+    -  "{{ ardana_svc_config_dir }}"
 
-- name: ARD-SVC | install | Setup ardana-service
+- name: ARD-SVC | install | Setup ardana-service (venv)
   become: yes
   setup_systemd:
     name: "{{ ardana_svc_service }}"
@@ -52,4 +53,18 @@
     cmd: python
     args: >
       {{ ardana_svc_component | venv_dir }}/lib/python2.7/site-packages/ardana_service/main.py
-      --config-file {{ ardana_svc_component | config_dir }}/ardana-service.conf
+      --config-file {{ ardana_svc_config_file }}
+  when: deployer_media_legacy_layout|bool == true
+
+- name: ARD-SVC | install | Setup ardana-service (rpm)
+  become: yes
+  setup_systemd:
+    name: "{{ ardana_svc_service }}"
+    service: "{{ ardana_svc_service }}"
+    user: "{{ ardana_svc_os_user }}"
+    group: "{{ ardana_svc_os_group }}"
+    install_path: /usr/bin
+    cmd: ardana-service
+    args: >
+      --config-file {{ ardana_svc_config_file }}
+  when: deployer_media_legacy_layout|bool == false

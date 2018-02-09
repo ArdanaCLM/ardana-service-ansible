@@ -14,24 +14,12 @@
 # under the License.
 ---
 
-- name: ARD-SVC | configure | configure ardana-service  (venv)
+- name: ARD-SVC | configure | configure ardana-service
   become: yes
   template:
-    dest: "{{ ardana_svc_component | config_dir }}/ardana-service.conf"
+    dest: "{{ ardana_svc_config_file}}"
     src: "ardana-service.conf.j2"
     owner: "{{ ardana_svc_os_user }}"
     group: "{{ ardana_svc_os_user }}"
     mode: 0600
   register: ardana_notify_ardana_service_restart_required
-  when: deployer_media_legacy_layout|bool == true
-
-- name: ARD-SVC | configure | configure ardana-service  (rpm)
-  become: yes
-  template:
-    dest: "/etc/ardana-service.conf"
-    src: "ardana-service.conf.j2"
-    owner: "{{ ardana_svc_os_user }}"
-    group: "{{ ardana_svc_os_user }}"
-    mode: 0600
-  register: ardana_notify_ardana_service_restart_required
-  when: deployer_media_legacy_layout|bool == false
