@@ -14,6 +14,18 @@
 # under the License.
 ---
 
+- name: ARD-SVC | install | Create log dirs
+  become: yes
+  file:
+    path: "{{ item }}"
+    owner: "{{ ardana_svc_os_user }}"
+    group: "{{ ardana_svc_os_group }}"
+    mode: 0775
+    state: directory
+  with_items:
+    - "{{ ardana_svc_log_dir }}"
+    - "{{ ardana_svc_process_logs_dir }}"
+
 - name: ARD-SVC | configure | configure ardana-service
   become: yes
   template:

@@ -1,6 +1,6 @@
 #
 # (c) Copyright 2016 Hewlett Packard Enterprise Development LP
-# (c) Copyright 2017 SUSE LLC
+# (c) Copyright 2017-2018 SUSE LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -22,29 +22,27 @@
 #       playbook in ardana-upgrade which directly calls ardana-status
 # ardana_svc_perform_upgrade_check is injected by ardana-service-upgrade playbook
 
-#TODO - comment back in when service is re-enabled
-#- name: ARD-SVC | status | Check service definition exists
-#  become: yes
-#  stat: path="{{ ardana_svc_systemd_path }}"
-#  register: stat_check_result
+- name: ARD-SVC | status | Check service definition exists
+  become: yes
+  stat: path="{{ ardana_svc_systemd_path }}"
+  register: stat_check_result
 #  when: ardana_svc_perform_upgrade_check or (ardana_pre_upgrade_check is defined)
 
-#- name: ARD-SVC | status | Get service status
-#  become: yes
-#  command: systemctl status "{{ ardana_svc_service }}"
-#  ignore_errors: yes
-#  register: systemctl_status_result
+- name: ARD-SVC | status | Get service status
+  become: yes
+  command: systemctl status "{{ ardana_svc_service }}"
+  register: systemctl_status_result
 
 # NOTE: if stat_check_result exists, then this is
 # either a pre-upgrade status check or an upgrade status check
-#- name: ARD-SVC | status | Report of service status
-#  become: yes
-#  fail:
-#    msg: |
-#      {{ ardana_svc_service }} is not running.
-#      systemctl status {{ ardana_svc_service }} output:
-#      {{ systemctl_status_result.stdout }}
-#      {{ systemctl_status_result.stderr }}
-#  when: systemctl_status_result.rc != 0
-#        and (stat_check_result is not defined or
-#        stat_check_result.stat.exists)
+- name: ARD-SVC | status | Report of service status
+  become: yes
+  fail:
+    msg: |
+      {{ ardana_svc_service }} is not running.
+      systemctl status {{ ardana_svc_service }} output:
+      {{ systemctl_status_result.stdout }}
+      {{ systemctl_status_result.stderr }}
+  when: systemctl_status_result.rc != 0
+        and (stat_check_result is not defined or
+        stat_check_result.stat.exists)

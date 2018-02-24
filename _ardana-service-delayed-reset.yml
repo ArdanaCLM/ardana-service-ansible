@@ -1,0 +1,54 @@
+# (c) Copyright 2018 SUSE LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+---
+
+# During the install process, ardana-service is run in an unsecured fashion
+# because some services, such as keystone, is not yet available.
+# This playbook is run at the end of the install process (site.yml) to switch
+# ardana-service to a secured configuration running with keystone enabled.
+# The asynchronous 60 second delay is needed so site.yml can complete, 
+# allowing ardana-service to tell the UI it is done with the install.
+# Once ardana-service is restarted, the UI is no longer able to communicate
+# to ardana-service.
+# Subsequent runs of this playbook will always fail because ardana-service
+# requires keystone authentication to use its API.  ignore_errors: yes will
+# allow site.yml to complete.
+
+- include: _ardana-service-common.yml
+
+# hosts must be ARD-SVC to have access to the host.bind vars
+- hosts: ARD-SVC
+  roles:
+    - ARD-SVC
+  tasks:
+    - name: ARD-SVC | restart | restart via POST call
+      uri:
+        # ansible v1.9 parameters:
+        HEADER_Content-Type: "application/json"
+        url: "http://localhost:{{host.bind.ARD_SVC.internal.port}}/api/v2/restart"
+        method: POST
+        body: >
+          {"delay": 60}
+      register: restart_cmd_result
+      ignore_errors: yes
+      when: ardana_svc_host_is_deployer
+
+    # TODO: Temporary workaround for the above command in astack environments
+    #       We can remove this once bsc#1082705 is fixed
+    - name: ARD-SVC | restart | restart retry is failure was detected previously
+      command: >
+        curl -X POST -d '{"delay": 60}' -H "Content-Type: application/json" http://localhost:{{host.bind.ARD_SVC.internal.port}}/api/v2/restart
+      ignore_errors: yes
+      when: restart_cmd_result|failed and ardana_svc_host_is_deployer

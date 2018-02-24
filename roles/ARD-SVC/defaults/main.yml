@@ -24,10 +24,13 @@ ardana_openstack_path: "{{ ardana_user_home }}/openstack/"
 ardana_svc_component: ardana-service
 ardana_svc_service: "{{ ardana_svc_component }}"
 ardana_svc_service_venv_name: ardana-service
-ardana_svc_log_dir: "/var/log/{{ ardana_svc_component }}"
+ardana_svc_log_dir: "{% if ARD_SVC is defined -%}
+                         /var/log/{{ ardana_svc_component }}
+                     {%- else -%}
+                         /var/cache/ardana_installer/log/{{ ardana_svc_component }}
+                     {%- endif %}"
 ardana_svc_log_file: "{{ ardana_svc_log_dir }}/ardana-service.log"
 ardana_svc_process_logs_dir: "{{ ardana_svc_log_dir }}/logs"
-ardana_svc_process_archive_dir: "{{ ardana_svc_component | venv_dir }}/archive"
 ardana_svc_config_dir: "{% if deployer_media_legacy_layout|bool == true -%}
                             {{ ardana_svc_component | config_dir }}
                         {%- else -%}
@@ -39,23 +42,21 @@ ardana_svc_port: "{% if ARD_SVC is defined -%}
                   {%- else -%}
                       9085
                   {%- endif %}"
-ardana_svc_internal_service_url:  "{{ ARD_SVC.advertises.vips.private[0].url }}"
+
+# the else case should never happen given 'hosts: ARD-SVC' in
+# ardana-service-deploy-monasca.yml
+ardana_svc_internal_service_url:  "{% if ARD_SVC is defined -%}
+                                       {{ ARD_SVC.advertises.vips.private[0].url }}
+                                   {%- else -%}
+                                       http://undefined
+                                   {%- endif %}"
 ardana_svc_bind_address: "{% if host is defined -%}
                               {{ host.bind.ARD_SVC.internal.ip_address }}
                           {%- else -%}
                               127.0.0.1
                           {%- endif %}"
-ardana_svc_systemd_path: "/usr/lib/systemd/system/{{ ardana_svc_component }}.service"
+ardana_svc_systemd_path: "/etc/systemd/{{ ardana_svc_component }}.service"
 ardana_svc_perform_upgrade_check: false
 ardana_svc_default_log_level: info
 ardana_svc_ignore_stop: false
 ardana_svc_host_is_deployer: false
-
-keystone:
-  auth_url:  "{{ KEY_API.advertises.vips.private[0].url }}/v3"
-  project_name:  "{{ KEY_API.vars.keystone_admin_tenant }}"
-  project_domain_name:  "{{ KEY_API.vars.keystone_default_domain }}"
-  user_domain_name: "{{ KEY_API.vars.keystone_default_domain }}"
-  username: "{{ KEY_API.vars.keystone_admin_user }}"
-  password: "{{ KEY_API.vars.keystone_admin_pwd }}"
-  ca_cert_file: "/etc/ssl/certs/ca-certificates.crt"

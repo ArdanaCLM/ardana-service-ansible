@@ -35,3 +35,21 @@ cp_script_path = /usr/bin/ardana-cp
 cp_schema_dir = /usr/lib/python2.7/site-packages/ardana_configurationprocessor/data/Site
 cp_services_dir = /usr/share/ardana/input-model/2.0/services
 {%- endif %}
+
+
+{% if KEY_API is defined %}
+[keystone_authtoken]
+auth_url = "{{ KEY_API.advertises.vips.private[0].url }}/v3"
+www_authentication_uri = ${keystone_authtoken.auth_url}
+service_token_roles_required = true
+
+auth_type = password
+project_domain_name = "{{ KEY_API.vars.keystone_default_domain }}"
+project_name = "{{ KEY_API.vars.keystone_admin_tenant }}"
+user_domain_name = "{{ KEY_API.vars.keystone_default_domain }}"
+username = "{{ KEY_API.vars.keystone_admin_user }}"
+password = "{{ KEY_API.vars.keystone_admin_pwd }}"
+
+delay_auth_decision = true
+insecure = true
+{%- endif -%}

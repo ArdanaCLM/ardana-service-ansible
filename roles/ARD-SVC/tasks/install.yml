@@ -29,19 +29,14 @@
   register: ardana_notify_ardana_service_restart_required
   when: deployer_media_legacy_layout|bool == true
 
-- name: ARD-SVC | install | Create required directories
+- name: ARD-SVC | install | Create service config directory
   become: yes
   file:
-    path: "{{ item }}"
+    path: "{{ ardana_svc_config_dir }}"
     owner: "{{ ardana_svc_os_user }}"
     group: "{{ ardana_svc_os_group }}"
     mode: 0775
     state: directory
-  with_items:
-    -  "{{ ardana_svc_log_dir }}"
-    -  "{{ ardana_svc_process_logs_dir }}"
-    -  "{{ ardana_svc_process_archive_dir }}"
-    -  "{{ ardana_svc_config_dir }}"
 
 - name: ARD-SVC | install | Setup ardana-service (venv)
   become: yes
