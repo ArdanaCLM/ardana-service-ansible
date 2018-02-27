@@ -59,4 +59,3 @@ ardana_svc_systemd_path: "/etc/systemd/{{ ardana_svc_component }}.service"
 ardana_svc_perform_upgrade_check: false
 ardana_svc_default_log_level: info
 ardana_svc_ignore_stop: false
-ardana_svc_host_is_deployer: false

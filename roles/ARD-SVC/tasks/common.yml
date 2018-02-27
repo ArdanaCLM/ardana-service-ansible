@@ -20,7 +20,11 @@
   stat: path={{ardana_openstack_path}}
   register: stat_data
 
-- name: ARD-SVC | common | Set fact
+- name: ARD-SVC | common | Set is_deployer to false
+  set_fact:
+    ardana_svc_host_is_deployer: false
+
+- name: ARD-SVC | common | Set is_deployer to true, if true
   set_fact:
     ardana_svc_host_is_deployer: true
   when: stat_data is defined and stat_data.stat.exists
