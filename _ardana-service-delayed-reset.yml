@@ -33,6 +33,18 @@
   roles:
     - ARD-SVC
   tasks:
+     # The delayed reset playbook causes the ardana service to restart and listen
+     # on a different address (i.e. NOT localhost), skip all further processing if
+     # the ardana service has already been restarted
+
+    - name: ARD-SVC | restart | check whether restart is needed
+      wait_for:
+        host: 127.0.0.1
+        port: "{{ host.bind.ARD_SVC.internal.port }}"
+        timeout: 1
+      register: ardana_svc_on_localhost
+      ignore_errors: yes
+
     - name: ARD-SVC | restart | restart via POST call
       uri:
         # ansible v1.9 parameters:
@@ -43,7 +55,7 @@
           {"delay": 60}
       register: restart_cmd_result
       ignore_errors: yes
-      when: ardana_svc_host_is_deployer
+      when: ardana_svc_host_is_deployer and ardana_svc_on_localhost|success
 
     # TODO: Temporary workaround for the above command in astack environments
     #       We can remove this once bsc#1082705 is fixed
