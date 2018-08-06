@@ -29,6 +29,7 @@ ardana_svc_log_dir: "{% if ARD_SVC is defined -%}
                      {%- else -%}
                          /var/cache/ardana_installer/log/{{ ardana_svc_component }}
                      {%- endif %}"
+ardana_svc_cache_dir: "/var/cache/{{ ardana_svc_component }}"
 ardana_svc_log_file: "{{ ardana_svc_log_dir }}/ardana-service.log"
 ardana_svc_process_logs_dir: "{{ ardana_svc_log_dir }}/logs"
 ardana_svc_config_dir: "{% if deployer_media_legacy_layout|bool == true -%}
