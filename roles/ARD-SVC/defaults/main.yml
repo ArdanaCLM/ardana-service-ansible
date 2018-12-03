@@ -24,12 +24,12 @@ ardana_openstack_path: "{{ ardana_user_home }}/openstack/"
 ardana_svc_component: ardana-service
 ardana_svc_service: "{{ ardana_svc_component }}"
 ardana_svc_service_venv_name: ardana-service
+ardana_svc_cache_dir: "/var/cache/{{ ardana_svc_component }}"
 ardana_svc_log_dir: "{% if ARD_SVC is defined -%}
                          /var/log/{{ ardana_svc_component }}
                      {%- else -%}
-                         /var/cache/ardana_installer/log/{{ ardana_svc_component }}
+                         {{ ardana_svc_cache_dir }}
                      {%- endif %}"
-ardana_svc_cache_dir: "/var/cache/{{ ardana_svc_component }}"
 ardana_svc_log_file: "{{ ardana_svc_log_dir }}/ardana-service.log"
 ardana_svc_process_logs_dir: "{{ ardana_svc_log_dir }}/logs"
 ardana_svc_config_dir: "{% if deployer_media_legacy_layout|bool == true -%}
@@ -58,3 +58,13 @@ ardana_svc_systemd_path: "/etc/systemd/{{ ardana_svc_component }}.service"
 ardana_svc_perform_upgrade_check: false
 ardana_svc_default_log_level: info
 ardana_svc_ignore_stop: false
+
+ui_comp: installer-ui
+ui_comp_dir: "{% if deployer_media_legacy_layout|bool -%}
+                  {{ ui_comp | venv_dir }}
+              {%- else -%}
+                  /usr/share/ardana/ardana-installer-ui/web
+              {%- endif -%}"
+
+db_file: "{{ ardana_svc_cache_dir }}/db.json"
+progress_file: "{{ ardana_svc_cache_dir }}/progress.json"

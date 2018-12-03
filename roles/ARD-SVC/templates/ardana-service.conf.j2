@@ -23,6 +23,10 @@ host = {{ ardana_svc_bind_address }}
 url = {{ ardana_svc_internal_service_url }}
 log_file = {{ ardana_svc_log_file }}
 
+db_file = {{ db_file }}
+progress_file = {{ progress_file }}
+ui_home = {{ ui_comp_dir }}
+
 [paths]
 log_dir = {{ ardana_svc_process_logs_dir }}
 {% if deployer_media_legacy_layout|bool -%}
@@ -35,6 +39,20 @@ cp_python_path = /usr/bin/python2
 cp_script_path = /usr/bin/ardana-cp
 cp_schema_dir = /usr/lib/python2.7/site-packages/ardana_configurationprocessor/data/Site
 cp_services_dir = /usr/share/ardana/input-model/2.0/services
+{%- endif %}
+
+[urls]
+{% if HZN_WEB is defined -%}
+  {%- set hzn = HZN_WEB.advertises.vips.public[0] -%}
+  {%- if "://myardana.test" in HZN_WEB.advertises.vips.public[0].url -%}
+    horizon: {{ hzn.protocol }}://{{ hzn.ip_address }}:{{ hzn.port }}
+  {%- else -%}
+    horizon: {{ hzn.url }}
+  {%- endif -%}
+{%- endif %}
+
+{% if OPS_WEB is defined -%}
+  opsconsole: {{ OPS_WEB.advertises.vips.public[0].url }}
 {%- endif %}
 
 
