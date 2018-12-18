@@ -32,11 +32,7 @@ ardana_svc_log_dir: "{% if ARD_SVC is defined -%}
                      {%- endif %}"
 ardana_svc_log_file: "{{ ardana_svc_log_dir }}/ardana-service.log"
 ardana_svc_process_logs_dir: "{{ ardana_svc_log_dir }}/logs"
-ardana_svc_config_dir: "{% if deployer_media_legacy_layout|bool == true -%}
-                            {{ ardana_svc_component | config_dir }}
-                        {%- else -%}
-                            /etc/ardana
-                        {%- endif %}"
+ardana_svc_config_dir: "/etc/ardana"
 ardana_svc_config_file: "{{ ardana_svc_config_dir }}/ardana-service.conf"
 ardana_svc_port: "{% if ARD_SVC is defined -%}
                       {{ ARD_SVC.advertises.vips.private[0].port }}
@@ -60,11 +56,7 @@ ardana_svc_default_log_level: info
 ardana_svc_ignore_stop: false
 
 ui_comp: installer-ui
-ui_comp_dir: "{% if deployer_media_legacy_layout|bool -%}
-                  {{ ui_comp | venv_dir }}
-              {%- else -%}
-                  /usr/share/ardana/ardana-installer-ui/web
-              {%- endif -%}"
+ui_comp_dir: "/usr/share/ardana/ardana-installer-ui/web"
 
 db_file: "{{ ardana_svc_cache_dir }}/db.json"
 progress_file: "{{ ardana_svc_cache_dir }}/progress.json"

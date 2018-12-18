@@ -20,15 +20,6 @@
   install_package:
     cache: update
 
-- name: ARD-SVC | install | install ardana-service (venv legacy)
-  become: yes
-  install_package:
-    name: "{{ ardana_svc_service_venv_name }}"
-    service: "{{ ardana_svc_service }}"
-    state: present
-  register: ardana_notify_ardana_service_restart_required
-  when: deployer_media_legacy_layout|bool == true
-
 - name: ARD-SVC | install | Create service config directory
   become: yes
   file:
@@ -37,19 +28,6 @@
     group: "{{ ardana_svc_os_group }}"
     mode: 0775
     state: directory
-
-- name: ARD-SVC | install | Setup ardana-service (venv)
-  become: yes
-  setup_systemd:
-    name: "{{ ardana_svc_service }}"
-    service: "{{ ardana_svc_service }}"
-    user: "{{ ardana_svc_os_user }}"
-    group: "{{ ardana_svc_os_group }}"
-    cmd: python
-    args: >
-      {{ ardana_svc_component | venv_dir }}/lib/python2.7/site-packages/ardana_service/main.py
-      --config-file {{ ardana_svc_config_file }}
-  when: deployer_media_legacy_layout|bool == true
 
 - name: ARD-SVC | install | Setup ardana-service (rpm)
   become: yes
@@ -62,4 +40,3 @@
     cmd: ardana-service
     args: >
       --config-file {{ ardana_svc_config_file }}
-  when: deployer_media_legacy_layout|bool == false

@@ -29,17 +29,10 @@ ui_home = {{ ui_comp_dir }}
 
 [paths]
 log_dir = {{ ardana_svc_process_logs_dir }}
-{% if deployer_media_legacy_layout|bool -%}
-cp_python_path = /opt/stack/service/config-processor/venv/bin/python
-cp_script_path = /opt/stack/service/config-processor/venv/share/ardana-config-processor/Driver/ardana-cp
-cp_schema_dir = /opt/stack/service/config-processor/venv/share/ardana-config-processor/Data/Site
-cp_services_dir = {{ ardana_user_home }}/openstack/ardana/services
-{%- else -%}
 cp_python_path = /usr/bin/python2
 cp_script_path = /usr/bin/ardana-cp
 cp_schema_dir = /usr/lib/python2.7/site-packages/ardana_configurationprocessor/data/Site
 cp_services_dir = /usr/share/ardana/input-model/2.0/services
-{%- endif %}
 
 [urls]
 {% if HZN_WEB is defined -%}
